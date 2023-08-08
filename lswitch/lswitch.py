@@ -55,14 +55,6 @@ def receive_frame(src_mac_address, dest_mac_address, incoming_device_name):
     logging.debug('called receive_frame()')
     logging.debug(switch_table)
 
-    if len(switch_table) >= max_table_entries:
-        oldest_mac = min(switch_table, key=lambda k: switch_table[k][1])
-        print(oldest_mac)
-        switch_table_delete(oldest_mac, switch_table[oldest_mac][0])
-        del switch_table[oldest_mac]
-        print("Deleteed Oldest Mac")
-
-
     current_time = time.time()
 
     # Update the source MAC address entry
@@ -90,12 +82,27 @@ def receive_frame(src_mac_address, dest_mac_address, incoming_device_name):
                 switch_table_insert(dest_mac_address, device)
 
     # Clean up expired entries
-    for mac_address, expiration_time in list(expiration_times.items()):
-        if expiration_time <= current_time:
-            switch_table_delete(mac_address, switch_table[mac_address][0])
-            del switch_table[mac_address]
-            del expiration_times[mac_address]
+    expired_macs = [mac_address for mac_address, expiration_time in expiration_times.items() if expiration_time <= current_time]
+    for mac_address in expired_macs:
+        switch_table_delete(mac_address, switch_table[mac_address][0])
+        del switch_table[mac_address]
+        del expiration_times[mac_address]
 
+    # Handle size of switch table > max_table_entries
+    if len(switch_table) >= max_table_entries:
+        oldest_mac = min(switch_table, key=lambda k: switch_table[k][1])
+
+        print("Before deletion:")
+        print("switch_table:", switch_table)
+        print("oldest_mac:", oldest_mac)
+
+        # Then proceed with deletion
+        if oldest_mac in switch_table:
+            switch_table_delete(oldest_mac, switch_table[oldest_mac][0])
+            del switch_table[oldest_mac]
+            del expiration_times[oldest_mac]
+        else:
+            print("oldest_mac not found in switch_table")
 
 
 # Do not edit this function. This is provided for you to use.
