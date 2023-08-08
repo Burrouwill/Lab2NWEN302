@@ -1,0 +1,80 @@
+"""
+NWEN 302 Lab 2
+Learning Switch Implementation
+Modify this file to implement the learning switch requirements.
+
+Full name:
+Student ID:
+
+You will be implementing the functions init() and receive_frame(). You are free to
+define/create new functions.
+
+You can use the functions switch_table_insert() and switch_table_delete() to insert
+entries to and delete entries from switch table, respectively. 
+
+"""
+
+import os
+import logging
+import struct
+
+
+def init():
+    """
+    This function will be called once by the main program during starup.
+    Use this function to initialize any data structures. 
+    """
+    logging.debug('called init()')
+    
+    # TODO: Implement me (if necessary)
+    
+
+
+def receive_frame(src_mac_address, dest_mac_address, incoming_device_name):
+    """
+    This function will be called every time the switch receives a frame from
+    any of its ports. 
+    
+    Arguments:
+    src_mac_address: Source 48-bit MAC address.
+    dest_mac_address: Destination 48-bit MAC address.
+    incoming_device_name: name of the interface (e.g. eth0) that the frame was received.
+
+    """
+    logging.debug('called receive_frame()')
+    
+    # TODO: Implement me
+
+
+
+# Do not edit this function. This is provided for you to use.
+def switch_table_insert(mac_address, device):
+    """
+    Insert an entry in the switch table.
+    
+    Arguments:
+    mac_address: This should be a 48-bit MAC address.
+    device Name of interface where the node with @mac_address is attached.
+    """
+    mac_str = '%.2x:%.2x:%.2x:%.2x:%.2x:%.2x' % struct.unpack("BBBBBB", mac_address)
+    cmd = 'bridge fdb add %s dev %s master static via br0' % (mac_str, device)
+    logging.debug('Invoking %s' % cmd)
+    os.system(cmd)
+
+
+
+# Do not edit this function. This is provided for you to use.
+def switch_table_delete(mac_address, device):
+    """
+    Delete an entry in the switch table.
+    
+    Arguments:
+    mac_address: MAC address. This should be a 48-bit MAC address.
+    device: Name of interface where the node with @mac_address is attached.
+    """
+    mac_str = '%.2x:%.2x:%.2x:%.2x:%.2x:%.2x' % struct.unpack("BBBBBB", mac_address)
+    cmd = 'bridge fdb del %s dev %s master static via br0' % (mac_str, device)
+    logging.debug('Invoking %s' % cmd)
+    os.system(cmd)
+
+
