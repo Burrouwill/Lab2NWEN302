@@ -45,7 +45,7 @@ def receive_frame(src_mac_address, dest_mac_address, incoming_device_name):
     """
     This function will be called every time the switch receives a frame from
     any of its ports. 
-    
+
     Arguments:
     src_mac_address: Source 48-bit MAC address.
     dest_mac_address: Destination 48-bit MAC address.
@@ -57,8 +57,10 @@ def receive_frame(src_mac_address, dest_mac_address, incoming_device_name):
 
     if len(switch_table) >= max_table_entries:
         oldest_mac = min(switch_table, key=lambda k: switch_table[k][1])
+        print(oldest_mac)
         switch_table_delete(oldest_mac, switch_table[oldest_mac][0])
         del switch_table[oldest_mac]
+        print("Deleteed Oldest Mac")
 
 
     current_time = time.time()
